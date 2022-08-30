@@ -61,7 +61,7 @@ class MyGLSurfaceView @JvmOverloads constructor(context: Context, attrs: Attribu
     private var mPreviousY: Float = 0f
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
-        val x = event.x
+        /*val x = event.x
         val y = event.y
         when (event.action) {
             MotionEvent.ACTION_MOVE -> {
@@ -76,7 +76,7 @@ class MyGLSurfaceView @JvmOverloads constructor(context: Context, attrs: Attribu
             }
         }
         mPreviousX = x
-        mPreviousY = y
+        mPreviousY = y*/
         return true
     }
 
