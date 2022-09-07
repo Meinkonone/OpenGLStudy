@@ -48,7 +48,7 @@ open class BaseRender(val context: Context){
         Matrix.translateM(mMvpMatrix, 0, 0f, value, 0f)
     }
 
-    open fun onSurfaceCreate() {
+    open fun onSurfaceCreated() {
         initProgram()
     }
 
@@ -59,7 +59,7 @@ open class BaseRender(val context: Context){
         Matrix.scaleM(mMvpMatrix, 0, 1f, ratio, 1f)
     }
 
-    open fun draw() {
+    open fun onDrawFrame() {
         if (mProgram == -1) {
             Log.w(TAG, "draw failed, program not init success")
             return

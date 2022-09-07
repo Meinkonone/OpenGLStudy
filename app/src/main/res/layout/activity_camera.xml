@@ -5,12 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.konone.openglstudy.gles.views.MyGLSurfaceView
-        android:id="@+id/surface_view"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <com.konone.openglstudy.gles.views.CustomSurfaceView
         android:id="@+id/effect_gl_view"
         android:layout_width="match_parent"

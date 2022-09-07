@@ -1,6 +1,5 @@
-#extension GL_OES_EGL_image_external : require
 precision mediump float;
-uniform samplerExternalOES vTexture;
+uniform sampler2D vTexture;
 varying vec2 textureCoord;
 
 void main() {

@@ -56,11 +56,11 @@ class TriangleRender(context: Context) : BaseRender(context = context) {
     init {
         mVertexShader = Utils.loadShader(
             GLES20.GL_VERTEX_SHADER,
-            Utils.loadShaderFile(context, "shader/shape_vertex.glsl")
+            Utils.loadShaderFile(context, "shape/shape_vertex.glsl")
         )
         mFragmentShader = Utils.loadShader(
             GLES20.GL_FRAGMENT_SHADER,
-            Utils.loadShaderFile(context, "shader/shape_fragment.glsl")
+            Utils.loadShaderFile(context, "shape/shape_fragment.glsl")
         )
 
         mVertexCount = mTriangleCoordinates.size / COORDINATES_PER_VERTEX
@@ -74,8 +74,8 @@ class TriangleRender(context: Context) : BaseRender(context = context) {
     }
 
 
-    override fun draw() {
-        super.draw()
+    override fun onDrawFrame() {
+        super.onDrawFrame()
 
         GLES20.glUseProgram(mProgram)
 

@@ -5,7 +5,9 @@ import android.graphics.SurfaceTexture
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.opengl.Matrix
+import android.util.Log
 import com.konone.openglstudy.gles.renders.BaseRender
+import com.konone.openglstudy.gles.texture.FBOTexture
 import com.konone.openglstudy.gles.util.Utils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -94,7 +96,7 @@ class CameraRender(context: Context): BaseRender(context) {
         mListener = listener
     }
 
-    override fun onSurfaceCreate() {
+    override fun onSurfaceCreated() {
         mProgram = Utils.createProgram(Utils.readShaderFile(context, "camera/camera_vertex.glsl"),
             Utils.readShaderFile(context, "camera/camera_fragment.glsl"))
 
@@ -115,8 +117,13 @@ class CameraRender(context: Context): BaseRender(context) {
         vTextureHandle = GLES20.glGetUniformLocation(mProgram, "vTexture")
     }
 
-    override fun draw() {
-        super.draw()
+    override fun onSurfaceChanged(width: Int, height: Int) {
+        super.onSurfaceChanged(width, height)
+        prepareFrameBuffer(width, height)
+    }
+
+    override fun onDrawFrame() {
+        super.onDrawFrame()
 
         //更新纹理数据(消费者消费，否则无法填充新数据)
         mSurfaceTexture.updateTexImage()
@@ -147,9 +154,16 @@ class CameraRender(context: Context): BaseRender(context) {
         GLES20.glUniformMatrix4fv(vCoordMatrixHandle, 1, false, vCoordMatrix, 0)
         Utils.checkGLError("setCoordMatrix")
 
+        //insert frame buffer to render oes into fbo texture id
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0])
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId[0])
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4) //一条公共边，2，3两个点
+
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
+
         //3. 设置纹理
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0) //激活gl程序的第1个纹理
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureId[0]) //为gl程序绑定纹理id
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0]) //为gl程序绑定纹理id
         GLES20.glUniform1i(vTextureHandle, 0) //将纹理设置给gl程序
         Utils.checkGLError("setTexture")
 
@@ -161,5 +175,43 @@ class CameraRender(context: Context): BaseRender(context) {
         GLES20.glDisableVertexAttribArray(vPosMatrixHandle)
         GLES20.glDisableVertexAttribArray(vCoordHandle)
         Utils.checkGLError("disableVertexPos")
+    }
+
+    private val mFrameBufferTextures = IntArray(1)
+    private val mFrameBuffers = IntArray(1)
+
+    private fun prepareFrameBuffer(width: Int, height: Int) {
+        GLES20.glGenFramebuffers(1, mFrameBuffers, 0)
+        Utils.checkGLError("gen frame buffer")
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0])
+
+        GLES20.glGenTextures(1, mFrameBufferTextures, 0)
+        Utils.checkGLError("gen frame buffer texture")
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0])
+        Utils.checkGLError("bind texture")
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST.toFloat())
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR.toFloat())
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE.toFloat())
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE.toFloat())
+        Utils.checkGLError("set texture param")
+        GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
+            GLES20.GL_TEXTURE_2D, mFrameBufferTextures[0], 0)
+        GLES20.glTexImage2D(
+            GLES20.GL_TEXTURE_2D,
+            0,
+            GLES20.GL_RGBA,
+            width,
+            height,
+            0,
+            GLES20.GL_RGBA,
+            GLES20.GL_UNSIGNED_BYTE,
+            null
+        )
+        Utils.checkFramebufferStatus("create frame buffer memory")
+
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+        Utils.checkGLError("unbind texture")
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
+        Utils.checkGLError("unbind frame buffer")
     }
 }

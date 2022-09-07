@@ -29,8 +29,8 @@ class CircleRender(context: Context) : BaseRender(context) {
     private val mColorBuffer = floatArrayOf(0.5f, 1f, 0.5f, 1.0f)
 
     init {
-        mVertexShader = Utils.loadShader(GLES20.GL_VERTEX_SHADER, Utils.loadShaderFile(context, "shader/shape_vertex.glsl"))
-        mFragmentShader = Utils.loadShader(GLES20.GL_FRAGMENT_SHADER, Utils.loadShaderFile(context, "shader/shape_fragment.glsl"))
+        mVertexShader = Utils.loadShader(GLES20.GL_VERTEX_SHADER, Utils.loadShaderFile(context, "shape/shape_vertex.glsl"))
+        mFragmentShader = Utils.loadShader(GLES20.GL_FRAGMENT_SHADER, Utils.loadShaderFile(context, "shape/shape_fragment.glsl"))
 
         mPositionCoordinates = createPosition()
 
@@ -69,8 +69,8 @@ class CircleRender(context: Context) : BaseRender(context) {
         super.onSurfaceChanged(width, height)
     }
 
-    override fun draw() {
-        super.draw()
+    override fun onDrawFrame() {
+        super.onDrawFrame()
 
         GLES20.glUseProgram(mProgram)
 

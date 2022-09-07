@@ -59,8 +59,8 @@ class SquareRender(context: Context) : BaseRender(context){
     private var mColorHandle = -1
 
     init {
-        mVertexShader = Utils.loadShader(GLES20.GL_VERTEX_SHADER, Utils.loadShaderFile(context, "shader/shape_vertex.glsl"))
-        mFragmentShader = Utils.loadShader(GLES20.GL_FRAGMENT_SHADER, Utils.loadShaderFile(context, "shader/shape_fragment.glsl"))
+        mVertexShader = Utils.loadShader(GLES20.GL_VERTEX_SHADER, Utils.loadShaderFile(context, "shape/shape_vertex.glsl"))
+        mFragmentShader = Utils.loadShader(GLES20.GL_FRAGMENT_SHADER, Utils.loadShaderFile(context, "shape/shape_fragment.glsl"))
 
         mVertexCount = mSquareCoordinates.size / COORDINATES_PER_VERTEX
         mVertexStride = COORDINATES_PER_VERTEX * 4
@@ -70,8 +70,8 @@ class SquareRender(context: Context) : BaseRender(context){
         super.onSurfaceChanged(width, height)
     }
 
-    override fun draw() {
-        super.draw()
+    override fun onDrawFrame() {
+        super.onDrawFrame()
 
         GLES20.glUseProgram(mProgram)
 

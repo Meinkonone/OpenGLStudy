@@ -63,7 +63,7 @@ object Utils {
             GLES20.glShaderSource(shader, shaderCode)
             //编译shader
             GLES20.glCompileShader(shader)
-            checkGLError("create shader")
+            checkGLError("create shape")
         }
     }
 
@@ -77,10 +77,10 @@ object Utils {
         return GLES20.glCreateProgram().also {
             //program 连接顶点着色程序
             GLES20.glAttachShader(it, vertexShader)
-            checkGLError("attach vertex shader")
+            checkGLError("attach vertex shape")
             //program 连接片源着色程序
             GLES20.glAttachShader(it,fragmentShader)
-            checkGLError("attach fragment shader")
+            checkGLError("attach fragment shape")
             //创建openGL ES程序可执行文件(使得openGL ES程序可执行操作)
             GLES20.glLinkProgram(it)
 
@@ -166,8 +166,15 @@ object Utils {
         val error: Int = GLES20.glGetError()
         Log.i("TTT", "checkGLError: $msg")
         if (error != GLES20.GL_NO_ERROR) {
-            Log.d("TTT", "$msg: EGL error: $error")
-            throw IllegalStateException("$msg: EGL error: $error")
+            Log.d("TTT", "$msg: GL error: $error")
+            throw IllegalStateException("$msg: GL error: $error")
+        }
+    }
+
+    fun checkFramebufferStatus(msg: String) {
+        val status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER)
+        if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+            throw IllegalStateException(msg + ": GL FBO error: " + Integer.toHexString(status))
         }
     }
 }

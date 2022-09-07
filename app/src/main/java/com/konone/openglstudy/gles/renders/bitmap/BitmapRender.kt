@@ -120,7 +120,7 @@ class BitmapRender(context: Context) : BaseRender(context) {
         Matrix.setIdentityM(vFrameBufferMatrix, 0)
     }
 
-    override fun onSurfaceCreate() {
+    override fun onSurfaceCreated() {
         //create program
         mProgram = Utils.createProgram(Utils.loadShaderFile(context, "bitmap/bitmap_vertex.glsl"),
             Utils.loadShaderFile(context, "bitmap/bitmap_fragment.glsl"))
@@ -143,8 +143,8 @@ class BitmapRender(context: Context) : BaseRender(context) {
         prepareFrameBuffer(width, height)
     }
 
-    override fun draw() {
-        super.draw()
+    override fun onDrawFrame() {
+        super.onDrawFrame()
         GLES20.glUseProgram(mProgram)
 
         var isVertical = 0
